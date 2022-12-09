@@ -26,9 +26,11 @@ var disk_free_size
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
-
+;uninstall page
 !insertmacro MUI_UNPAGE_WELCOME
 !insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
 
 !insertmacro MUI_LANGUAGE "English"
 
@@ -83,13 +85,13 @@ Section "Core Section" SectionCore
     ;create shortcut
     CreateShortcut "$desktop\Chinsaengchai_Siraphong.lnk" "$INSTDIR\6025_Project4.exe"
 
-    WriteUninstaller "$INSTDIR\uninstaller.exe"
-
     WriteRegStr HKLM Software\CND\Chinsaengchai_Siraphong "INFO-6025" "INFO-6025" 
+    WriteUninstaller "$INSTDIR\uninstaller.exe"
     Goto label_end
 
     label_abort:
     MessageBox MB_OK "Program already installed"
+    
     ;Abort
     Quit
     label_end:
@@ -112,6 +114,23 @@ LangString DESC_ExtraAddons ${LANG_ENGLISH} "Readme Section"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ; Uninstaller
-Section "un.install"
-    ;DeleteRegKey HKLM Software\CND\Chinsaengchai_Siraphong
+Section "Uninstall"
+    ${If} ${RunningX64}
+        SetRegView 64
+    ${Else}
+        SetRegView 32
+    ${EndIf}
+
+    Delete "$INSTDIR\uninstaller.exe"
+    Delete "$INSTDIR\ReadMe.txt"
+    Delete "$INSTDIR\asset\model\*"
+    Delete "$INSTDIR\asset\*"
+    Delete "$INSTDIR\src\shader\*"
+    Delete "$INSTDIR\src\*"
+    Delete "$INSTDIR\*"
+
+    DeleteRegKey HKLM Software\CND\Chinsaengchai_Siraphong
+    
+    RMDir /r "$INSTDIR" 
+
 SectionEnd
