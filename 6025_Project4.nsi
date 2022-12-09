@@ -19,12 +19,13 @@ var disk_free_size
 ;Page 
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW "get_drives"
 !insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "EULA_en.txt"
 !define MUI_DIRECTORYPAGE_VARIABLE $INSTDIR
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_INSTFILES
-!insertmacro MUI_PAGE_LICENSE "text.txt"
 !insertmacro MUI_PAGE_FINISH
+
 
 !insertmacro MUI_UNPAGE_WELCOME
 !insertmacro MUI_UNPAGE_CONFIRM
@@ -37,6 +38,7 @@ StrCpy $INSTDIR "$PROGRAMFILES64\${ProductName}"
 ${Else}
 StrCpy $INSTDIR "$PROGRAMFILES\${ProductName}"
 ${EndIf}
+MessageBox MB_OK "Please close any running applications"
 FunctionEnd
 
 Function get_drives
@@ -60,6 +62,7 @@ Function DisplayDrives
 FunctionEnd
 
 
+
 ; Create a section for the installer
 Section "Core Section" SectionCore
     
@@ -75,7 +78,10 @@ Section "Core Section" SectionCore
     label_install:
     WriteRegStr HKLM Software\CND\Chinsaengchai_Siraphong "INFO-6025" "INFO-6025" 
     
+    ;copy files
     file /r Siraphong_Chinsaengchai\*.*
+    ;create shortcut
+    CreateShortcut "$desktop\Chinsaengchai_Siraphong.lnk" "$INSTDIR\6025_Project4.exe"
 
     WriteUninstaller "$INSTDIR\uninstaller.exe"
 
