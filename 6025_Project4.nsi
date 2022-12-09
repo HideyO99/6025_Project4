@@ -1,20 +1,27 @@
 !include "MUI2.nsh"
 !include "FileFunc.nsh"
 !include "LogicLib.nsh"
+!include "x64.nsh"
 
 ; Name the installer
 OutFile "6025_Project4.exe"
 
-var /GLOBAL All_drives
-Var /GLOBAL num_drives
+;Product name
+!define ProductName "CND"
+Name "6025 Project4"
+
+;var
+var All_drives
+Var num_drives
 var disk_total_size
 var disk_free_size
 
+
+
 ;Page 
-!define MUI_WELCOMEPAGE_TITLE "Welcome"
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW "get_drives"
-!define MUI_WELCOMEPAGE_TEXT "You have drives "
 !insertmacro MUI_PAGE_WELCOME
+!define MUI_DIRECTORYPAGE_VARIABLE $INSTDIR
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_INSTFILES
@@ -24,10 +31,21 @@ var disk_free_size
 !insertmacro MUI_UNPAGE_WELCOME
 !insertmacro MUI_UNPAGE_CONFIRM
 
+!insertmacro MUI_LANGUAGE "English"
+
+Function .onInit
+${If} ${RunningX64}
+StrCpy $INSTDIR "$PROGRAMFILES64\${ProductName}"
+${Else}
+StrCpy $INSTDIR "$PROGRAMFILES\${ProductName}"
+${EndIf}
+FunctionEnd
 
 Function get_drives
     ${GetDrives} "HDD" "DisplayDrives"
-    SendMessage $mui.WelcomePage.Text ${WM_SETTEXT} 0 "STR:$(MUI_TEXT_WELCOME_INFO_TEXT)You have $num_drives drives$\r$\n$All_drives"
+    SendMessage $mui.WelcomePage.Text ${WM_SETTEXT} 0 "STR:$(MUI_TEXT_WELCOME_INFO_TEXT)$\r$\nYou have $num_drives drives$\r$\n$All_drives"
+    StrCpy $All_drives ""
+    StrCpy $num_drives ""
 FunctionEnd
 
 Function DisplayDrives
@@ -41,7 +59,6 @@ Function DisplayDrives
     StrCpy $All_drives "$All_drives $9 has free $disk_free_size GB of total capacity $disk_total_size GB$\r$\n"
 
     push $0
-    # your code here
 FunctionEnd
 
 
