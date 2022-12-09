@@ -192,7 +192,8 @@ Section "Uninstall"
     Delete "$INSTDIR\src\shader\*"
     Delete "$INSTDIR\src\*"
     Delete "$INSTDIR\*"
-
+    Delete "$desktop\Chinsaengchai_Siraphong.lnk"
+    
     DeleteRegKey HKLM Software\CND\Chinsaengchai_Siraphong
     
     RMDir /r "$INSTDIR" 
