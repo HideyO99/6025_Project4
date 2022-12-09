@@ -65,27 +65,28 @@ Section "Core Section" SectionCore
     
     SetOutPath $INSTDIR
     ;MessageBox MB_OK $INSTDIR
-
-    file /r Siraphong_Chinsaengchai\*.*
+    ${If} ${RunningX64}
+        SetRegView 64
+    ${Else}
+        SetRegView 32
+    ${EndIf}
+    ReadRegStr $0 HKLM Software\CND\Chinsaengchai_Siraphong "INFO-6025"
+    StrCmp $0 "" label_install label_abort
+    label_install:
+    WriteRegStr HKLM Software\CND\Chinsaengchai_Siraphong "INFO-6025" "INFO-6025" 
     
+    file /r Siraphong_Chinsaengchai\*.*
 
     WriteUninstaller "$INSTDIR\uninstaller.exe"
-    ; your code here
-    ;MessageBox MB_OK "Let's create a Hello_World.txt on our Desktop"
 
-    ; First we need to open a file called "Hello_World.txt",
-    ; on the desktop in write mode. This file does not need
-    ; to exist
-    ;FileOpen $0 "$DESKTOP\Hello_World.txt" w #<-- Don't forget this
+    WriteRegStr HKLM Software\CND\Chinsaengchai_Siraphong "INFO-6025" "INFO-6025" 
+    Goto label_end
 
-    ; Write to the file
-    ;FileWrite $0 "Hello World!"
-
-    ; Make sure you close the file when you are done with it
-    ;FileClose $0
-
-    ;MessageBox MB_OK "We created a text file on your desktop!"
-
+    label_abort:
+    MessageBox MB_OK "Program already installed"
+    ;Abort
+    Quit
+    label_end:
 SectionEnd
 
 
@@ -106,5 +107,5 @@ LangString DESC_ExtraAddons ${LANG_ENGLISH} "Readme Section"
 
 ; Uninstaller
 Section "un.install"
-
+    ;DeleteRegKey HKLM Software\CND\Chinsaengchai_Siraphong
 SectionEnd
