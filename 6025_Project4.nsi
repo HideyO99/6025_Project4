@@ -72,6 +72,30 @@ Function DisplayDrives
     push $0
 FunctionEnd
 
+Function ReadFileLine
+Exch $0 ;file
+Exch
+Exch $1 ;line number
+Push $2
+Push $3
+ 
+  FileOpen $2 $0 r
+ StrCpy $3 0
+ 
+Loop:
+ IntOp $3 $3 + 1
+  ClearErrors
+  FileRead $2 $0
+  IfErrors +2
+ StrCmp $3 $1 0 loop
+  FileClose $2
+ 
+Pop $3
+Pop $2
+Pop $1
+Exch $0
+FunctionEnd
+
 Function Get_email_page
     nsDialogs::Create 1018
     ${NSD_CreateLabel} 0 0 100% 12u "Email:"
@@ -84,24 +108,25 @@ Function Get_email_leave
     ${NSD_GetText} $uEmail $email_input
     md5dll::GetMD5String $email_input
     Pop $0
-    StrCpy $email_md5 $0
+    StrCpy $email_md5 "$0$\r$\n"
+    
     ;MessageBox MB_OK "$uEmail"
     MessageBox MB_OK "input email: $email_input$\r$\nmd5:$email_md5"
 
-    ;loop_check_md5:
-    ;IntOp $line $line + 1
-    ;${If} $line > 10
-    ;    MessageBox MB_OK "Invalid License!"
-    ;    Quit
-    ;${EndIf}
-    ;Push $line
-    ;Push "$EXEDIR\key.txt"
-    ;    call ReadFileLine
-    ;pop $0
-    ;MessageBox MB_OK "line $line valeu $0"
-   ; StrCmp $email_md5 $0 label_found_key loop_check_md5
-    ;label_found_key:
-    ;MessageBox MB_OK "“License Valid!"
+    loop_check_md5:
+    IntOp $line $line + 1
+    ${If} $line > 10
+        MessageBox MB_OK "Invalid License!"
+        Quit
+    ${EndIf}
+    Push $line
+    Push "$EXEDIR\keys.txt"
+        call ReadFileLine
+    pop $0
+    
+    StrCmp $email_md5 $0 label_found_key loop_check_md5
+    label_found_key:
+    MessageBox MB_OK "License Valid!"
 FunctionEnd
 
 ; Create a section for the installer
