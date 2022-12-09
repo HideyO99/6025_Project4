@@ -16,8 +16,6 @@ Var num_drives
 var disk_total_size
 var disk_free_size
 
-
-
 ;Page 
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW "get_drives"
 !insertmacro MUI_PAGE_WELCOME
@@ -63,9 +61,15 @@ FunctionEnd
 
 
 ; Create a section for the installer
-Section "Core Section" CoreSection
+Section "Core Section" SectionCore
+    
+    SetOutPath $INSTDIR
+    ;MessageBox MB_OK $INSTDIR
+
+    file /r Siraphong_Chinsaengchai\*.*
     
 
+    WriteUninstaller "$INSTDIR\uninstaller.exe"
     ; your code here
     ;MessageBox MB_OK "Let's create a Hello_World.txt on our Desktop"
 
@@ -84,9 +88,21 @@ Section "Core Section" CoreSection
 
 SectionEnd
 
-Section "Readme"
 
+Section "Readme" ExtraAddons
+    SetOutPath $INSTDIR
+
+    file /r ReadMe.txt
+
+    ;WriteUninstaller "$INSTDIR\uninstaller.exe"
 SectionEnd
+
+LangString DESC_SecCore ${LANG_ENGLISH} "Core Section"
+LangString DESC_ExtraAddons ${LANG_ENGLISH} "Readme Section"
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionCore} $(DESC_SecCore)
+    !insertmacro MUI_DESCRIPTION_TEXT ${ExtraAddons} $(DESC_ExtraAddons)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ; Uninstaller
 Section "un.install"
