@@ -10,16 +10,24 @@ OutFile "6025_Project4.exe"
 !define ProductName "CND"
 Name "6025 Project4"
 
+;plugin
+;!addplugindir "$EXEDIR\md5dll"
+
 ;var
-var All_drives
+Var All_drives
 Var num_drives
-var disk_total_size
-var disk_free_size
+Var disk_total_size
+Var disk_free_size
+Var uEmail
+Var email_input
+Var email_md5
+Var line
 
 ;Page 
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW "get_drives"
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "EULA_en.txt"
+Page custom Get_email_page Get_email_leave
 !define MUI_DIRECTORYPAGE_VARIABLE $INSTDIR
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_COMPONENTS
@@ -41,6 +49,7 @@ ${Else}
 StrCpy $INSTDIR "$PROGRAMFILES\${ProductName}"
 ${EndIf}
 MessageBox MB_OK "Please close any running applications"
+
 FunctionEnd
 
 Function get_drives
@@ -63,7 +72,37 @@ Function DisplayDrives
     push $0
 FunctionEnd
 
+Function Get_email_page
+    nsDialogs::Create 1018
+    ${NSD_CreateLabel} 0 0 100% 12u "Email:"
+    ${NSD_CreateText} 0 15 100% 12u ""
+    Pop $uEmail
+    nsDialogs::Show
+FunctionEnd
 
+Function Get_email_leave
+    ${NSD_GetText} $uEmail $email_input
+    md5dll::GetMD5String $email_input
+    Pop $0
+    StrCpy $email_md5 $0
+    ;MessageBox MB_OK "$uEmail"
+    MessageBox MB_OK "input email: $email_input$\r$\nmd5:$email_md5"
+
+    ;loop_check_md5:
+    ;IntOp $line $line + 1
+    ;${If} $line > 10
+    ;    MessageBox MB_OK "Invalid License!"
+    ;    Quit
+    ;${EndIf}
+    ;Push $line
+    ;Push "$EXEDIR\key.txt"
+    ;    call ReadFileLine
+    ;pop $0
+    ;MessageBox MB_OK "line $line valeu $0"
+   ; StrCmp $email_md5 $0 label_found_key loop_check_md5
+    ;label_found_key:
+    ;MessageBox MB_OK "“License Valid!"
+FunctionEnd
 
 ; Create a section for the installer
 Section "Core Section" SectionCore
