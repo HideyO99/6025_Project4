@@ -31,10 +31,13 @@ Function get_drives
 FunctionEnd
 
 Function DisplayDrives
-    ;MessageBox MB_OK  "$9 (0 $0 1 $1 2 $2 3 $3 4 $4 5 $5 6 $6 7 $7 8 $8 9 $9  Drive)"
+    ;get each drive total capacity
     ${DriveSpace} $9 "/D=T /S=G" $disk_total_size
+    ;get available space from each drive
     ${DriveSpace} $9 "/D=F /S=G" $disk_free_size
+    ;count num drive
     IntOp $num_drives $num_drives + 1
+    ;append string 
     StrCpy $All_drives "$All_drives $9 has free $disk_free_size GB of total capacity $disk_total_size GB$\r$\n"
 
     push $0
